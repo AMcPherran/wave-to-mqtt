@@ -34,6 +34,8 @@ func handleMiddleButton(w *gowave.Wave, b gowave.ButtonEvent) {
 			{000, 000, 000, 000, 000, 000, 000, 000, 000},
 		}
 		w.SetDisplay(frame)
+		// Send request for current battery status
+		w.SendBatteryStatusRequest()
 		// Indicate that the Wave is ready to process motion
 	} else if b.Action == "Long" || b.Action == "ExtraLong" {
 		w.Recenter()
@@ -100,13 +102,21 @@ func handleBottomButton(w *gowave.Wave, b gowave.ButtonEvent) {
 				{000, 255, 000, 000, 000, 000, 000, 000, 000},
 				{000, 000, 255, 000, 000, 000, 000, 000, 000},
 			}
-		} else {
+		} else if b.Action == "Long" {
 			frame = [][]byte{
 				{000, 000, 255, 000, 000, 000, 000, 000, 000},
 				{000, 255, 000, 255, 000, 000, 000, 000, 000},
 				{255, 000, 255, 000, 000, 000, 000, 000, 000},
 				{000, 255, 000, 255, 000, 000, 000, 000, 000},
 				{000, 000, 255, 000, 000, 000, 000, 000, 000},
+			}
+		} else {
+			frame = [][]byte{
+				{000, 000, 255, 255, 255, 000, 000, 000, 000},
+				{000, 255, 255, 255, 255, 000, 000, 000, 000},
+				{255, 255, 255, 255, 255, 000, 000, 000, 000},
+				{000, 255, 255, 255, 255, 000, 000, 000, 000},
+				{000, 000, 255, 255, 255, 000, 000, 000, 000},
 			}
 		}
 		w.SetDisplay(frame)
