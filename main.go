@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -17,47 +16,54 @@ var mqPort string = os.Getenv("MQTT_PORT")
 var mqUser string = os.Getenv("MQTT_USER")
 var mqPass string = os.Getenv("MQTT_PASS")
 
+var serverState gowave.WaveState
+
 func main() {
 	// Always be trying to connect
 	for true {
 		wave, err := gowave.Connect()
 		if err != nil {
-			fmt.Println(err)
-			log.Println("Did not connect to Wave, will try again in a sec")
+			log.Printf("Did not connect to Wave, will try again in a few seconds. Reason: %s \n", err)
 			time.Sleep(time.Second)
 			continue
 		}
 
 		// Start receiving data from Wave
 		if err := wave.HandleNotifications(); err != nil {
-			log.Fatalf("subscribe failed: %s", err)
+			log.Fatalf("Subscribe failed: %s", err)
 		}
 		log.Printf("Receiving incoming data from Wave")
 
 		// Get an MQTT client
 		mqClient = getMQTTClient(mqHost, mqPort, mqUser, mqPass)
 
+		// Send request for initial battery status
+		wave.SendBatteryStatusRequest()
+
 		handleWave(wave)
 
 		//<-wave.BLE.Client.Disconnected()
 		// Disconnect the connections
-		wave.Disconnect()
+		err = wave.Disconnect()
+		if err != nil {
+			log.Printf("Error disconnecting from Wave: %s", err)
+		}
 		mqClient.Disconnect(5)
-		fmt.Println("Disconnected from Wave and MQTT broker")
+		log.Println("Disconnected from Wave and MQTT broker")
 	}
 }
 
 func handleWave(w *gowave.Wave) {
 	// Main loop for reading and acting on wave.State
-	var lastState gowave.WaveState
 	for true {
 		select {
 		case <-w.BLE.Client.Disconnected():
 			return
 		default:
-			handleButtons(w, &lastState)
-			handleMotion(w, &lastState)
-			handleBatteryStatus(w, &lastState)
+			handleButtons(w, &serverState)
+			handleMotion(w, &serverState)
+			handleBatteryStatus(w, &serverState)
+			handleDisplay(w, &serverState)
 			time.Sleep(500 * time.Microsecond)
 		}
 	}

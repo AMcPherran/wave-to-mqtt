@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"log"
+	"time"
 
 	gowave "github.com/AMcPherran/go-wave"
 )
@@ -11,6 +13,15 @@ func handleBatteryStatus(w *gowave.Wave, lastState *gowave.WaveState) {
 	if bs != lastState.GetBatteryStatus() {
 		lastState.SetBatteryStatus(bs)
 		publishBatteryStatus(bs)
+		log.Printf("Publishing updated battery status: %f \n", bs.Percentage)
+	}
+	// Update battery status every 15 minutes
+	if (time.Now().Unix() - bs.Timestamp) > (60 * 15) {
+		// Send request for updated battery status
+		err := w.SendBatteryStatusRequest()
+		if err != nil {
+			log.Printf("Error sending BatteryStatus Request: %s \n", err)
+		}
 	}
 }
 
