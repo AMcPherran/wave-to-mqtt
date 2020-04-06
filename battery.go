@@ -15,8 +15,8 @@ func handleBatteryStatus(w *gowave.Wave, lastState *gowave.WaveState) {
 		publishBatteryStatus(bs)
 		log.Printf("Publishing updated battery status: %f \n", bs.Percentage)
 	}
-	// Update battery status every 15 minutes
-	if (time.Now().Unix() - bs.Timestamp) > (60 * 15) {
+	// Update battery status every 5 minutes
+	if (time.Now().Unix() - bs.Timestamp) > (60 * 5) {
 		// Send request for updated battery status
 		err := w.SendBatteryStatusRequest()
 		if err != nil {

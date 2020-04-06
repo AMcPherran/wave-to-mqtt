@@ -63,7 +63,7 @@ func handleWave(w *gowave.Wave) {
 			handleButtons(w, &serverState)
 			handleMotion(w, &serverState)
 			handleBatteryStatus(w, &serverState)
-			handleDisplay(w, &serverState)
+			//handleDisplay(w, &serverState)
 			time.Sleep(500 * time.Microsecond)
 		}
 	}

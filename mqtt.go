@@ -41,7 +41,7 @@ func getMQTTClient(host, port, username, password string) mqtt.Client {
 		log.Printf("Connected to MQTT broker \"%s\"\n", host)
 	}
 	// Subscribe to display payload topic
-	client.Subscribe("wave/display/set", 0, displaySetMsgHandler)
+	// client.Subscribe("wave/display/set", 0, displaySetMsgHandler)
 	return client
 }
 
