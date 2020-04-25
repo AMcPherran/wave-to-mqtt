@@ -64,7 +64,7 @@ func handleWave(w *gowave.Wave) {
 			handleMotion(w, &serverState)
 			handleBatteryStatus(w, &serverState)
 			//handleDisplay(w, &serverState)
-			time.Sleep(500 * time.Microsecond)
+			time.Sleep(4 * time.Millisecond) // ~ 240Hz
 		}
 	}
 }

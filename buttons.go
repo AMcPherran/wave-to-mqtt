@@ -53,9 +53,9 @@ func handleMiddleButton(w *gowave.Wave, b gowave.ButtonEvent) {
 			log.Printf("Error sending DisplayFrame Request: %s\n", err)
 		}
 	} else {
-		if b.Action == "Up" {
+		if b.Action == "Up" || b.Action == "Click" {
 			topic := fmt.Sprintf("wave/buttons/%s", b.ID)
-			token := mqClient.Publish(topic, 0, false, b.Action)
+			token := mqClient.Publish(topic, 0, false, "Up")
 			token.Wait()
 		}
 		frame := gowave.BlankDisplayFrame()
